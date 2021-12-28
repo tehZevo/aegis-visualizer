@@ -27,7 +27,11 @@ class GetData(Resource):
         url = request.get_json(force=True)
         #get data from url
         data = ppcl(url)
-        data = json_to_nd(data)
+        try:
+          data = json_to_nd(data)
+          print(data)
+        except:
+          print("couldnt parse data as nd array")
 
         #send as simple json object
         data = nd_to_json(data, method="plain")
