@@ -64,6 +64,7 @@
 
     <script>
     var canvas = document.getElementById("canvas");
+    var g = canvas.getContext("2d");
 
     var doReshape = true;
     var doSigmoid = true;
@@ -120,6 +121,23 @@
       {
         data = await fetch("getData", {method:"POST", body:JSON.stringify(url)});
         data = await data.json();
+      }
+
+      //probably a base64 encoded image
+      if(data.data == null)
+      {
+        var img = new Image();
+        if(!data.startsWith("data:image"))
+        {
+          data = "data:image;base64," + data;
+        }
+
+        img.onload = function()
+        {
+          g.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+
+        img.src = data;
       }
 
       tf.tidy(() =>
