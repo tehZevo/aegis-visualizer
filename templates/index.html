@@ -126,7 +126,6 @@
       //probably a base64 encoded image
       if(data != null && data.data == null)
       {
-        data = data.data;
         console.log(typeof data);
         var img = new Image();
         if(!data.startsWith("data:image"))
