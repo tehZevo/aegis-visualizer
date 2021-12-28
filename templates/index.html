@@ -139,7 +139,7 @@
         }
 
         img.src = data;
-        return;
+        setTimeout(update, updateRate * 1000);
       }
 
       tf.tidy(() =>
