@@ -28,13 +28,13 @@ class GetData(Resource):
         #get data from url
         data = ppcl(url)
         try:
-          data = json_to_nd(data)
-          print(data)
+          response = json_to_nd(response)
+          #send as simple json object
+          response = nd_to_json(response, method="plain")
+          return response
         except:
           print("couldnt parse data as nd array")
 
-        #send as simple json object
-        data = nd_to_json(data, method="plain")
         return data
 
 api.add_resource(GetData, "/getData")
