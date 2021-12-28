@@ -27,6 +27,7 @@ class GetData(Resource):
         url = request.get_json(force=True)
         #get data from url
         data = ppcl(url)
+        print(data)
         try:
           response = json_to_nd(response)
           #send as simple json object
