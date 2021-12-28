@@ -125,6 +125,7 @@
     var updateButton = document.getElementById("update");
     var urlInput = document.getElementById("url-input");
     var rateInput = document.getElementById("rate-input");
+
     updateButton.onclick = function(e) {
       url = urlInput.value;
       if(!url.match(/(http:\/\/)|(https:\/\/)/))
@@ -159,6 +160,16 @@
         {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
+
+          //testing
+          if(doSwapRB)
+          {
+            g.filter = 'url(#matrix)';
+          }
+          else
+          {
+            g.filter = "none";
+          }
 
           g.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
