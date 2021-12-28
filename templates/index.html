@@ -54,9 +54,11 @@
       <input id="rate-input" type="text" value="0.1" placeholder="Update rate (seconds)"><br>
       <div>
         <input id="reshape-input" name="reshape" type="checkbox" checked="true" value="true">
-        <label for="reshape"> Reshape input</label><br>
+        <label for="reshape">Reshape input</label><br>
         <input id="sigmoid-input" name="sigmoid" type="checkbox" checked="true" value="true">
-        <label for="sigmoid"> Apply sigmoid</label><br>
+        <label for="sigmoid">Apply sigmoid</label><br>
+        <input id="swap-rb-input" name="swap-rb" type="checkbox" checked="false" value="false">
+        <label for="swap-rb">Swap red and blue</label><br>
       </div>
       <button id="update">Update</button>
     </div>
@@ -73,6 +75,7 @@
 
     var doReshape = true;
     var doSigmoid = true;
+    var doSwapRB = false;
     document.getElementById("reshape-input").addEventListener("change", (e) =>
     {
       doReshape = event.currentTarget.checked;
@@ -80,6 +83,10 @@
     document.getElementById("sigmoid-input").addEventListener("change", (e) =>
     {
       doSigmoid = event.currentTarget.checked;
+    });
+    document.getElementById("swap-rb-input").addEventListener("change", (e) =>
+    {
+      doSwapRB = event.currentTarget.checked;
     });
 
     function draw(data)
@@ -100,6 +107,16 @@
       tf.browser.toPixels(data, canvas);
 
       console.log(tf.memory().numTensors);
+    }
+
+    //TODO: move this to the onclick action?
+    if(doSwapRB)
+    {
+      g.filter = 'url(#matrix)';
+    }
+    else
+    {
+      g.filter = "none";
     }
 
     //get url to fetch
@@ -142,7 +159,7 @@
         {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
-          g.filter = 'url(#matrix)';
+
           g.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
 
@@ -155,7 +172,6 @@
       {
         if(data != null)
         {
-          g.filter = "none";
           data = tf.reshape(data.data, data.shape);
         }
         else
