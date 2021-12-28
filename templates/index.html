@@ -135,6 +135,8 @@
 
         img.onload = function()
         {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
           g.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
 
