@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Aegis Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.8.1/dist/tf.min.js"></script>
+    <style>
+    * { margin:0; padding:0; font-family:sans-serif; }
+    html, body { width:100%; height:100%; }
+    canvas {
+      display:block;
+      width:100%;
+      height:100%;
+      image-rendering: pixelated;
+    }
+    .controls {
+      position:absolute;
+      background-color:rgba(0, 0, 0, 0.25);
+      padding:8px;
+    }
+    input {
+      display:block;
+      background-color:rgba(0, 0, 0, 0.25);
+      color:#FFF;
+      font-size:14pt;
+      padding:8px;
+      border:0;
+    }
+    button {
+      display:block;
+      background-color:rgba(0, 0, 0, 0.25);
+      color:#FFF;
+      font-size:14pt;
+      padding:8px;
+      border:0;
+    }
+    label {
+      display:block;
+      background-color:rgba(0, 0, 0, 0.25);
+      color:#FFF;
+      font-size:14pt;
+      padding:8px;
+      border:0;
+    }
+    ::placeholder {
+      color:#DDD;
+      opacity: 1;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <input id="url-input" type="text" placeholder="URL here"><br>
+      <input id="rate-input" type="text" value="0.1" placeholder="Update rate (seconds)"><br>
+      <div>
+        <input id="reshape-input" name="reshape" type="checkbox" checked="true" value="true">
+        <label for="reshape"> Reshape input</label><br>
+        <input id="sigmoid-input" name="sigmoid" type="checkbox" checked="true" value="true">
+        <label for="sigmoid"> Apply sigmoid</label><br>
+      </div>
+      <button id="update">Update</button>
+    </div>
+    <canvas id="canvas" width="0" height="0"></canvas>
+
+    <script>
+    var canvas = document.getElementById("canvas");
+
+    var doReshape = true;
+    var doSigmoid = true;
+    document.getElementById("reshape-input").addEventListener("change", (e) =>
+    {
+      doReshape = event.currentTarget.checked;
+    });
+    document.getElementById("sigmoid-input").addEventListener("change", (e) =>
+    {
+      doSigmoid = event.currentTarget.checked;
+    });
+
+    function draw(data)
+    {
+      if(doReshape)
+      {
+        data = data.flatten();
+        var sq = Math.ceil(Math.sqrt(data.shape[0]));
+        var sq2 = sq * sq;
+        data = data.pad([[0, sq2 - data.shape[0]]])
+        data = data.reshape([sq, sq]);
+      }
+      if(doSigmoid)
+      {
+        data = data.sigmoid();
+      }
+
+      tf.browser.toPixels(data, canvas);
+
+      console.log(tf.memory().numTensors);
+    }
+
+    //get url to fetch
+    var url = null;
+    var updateRate = 0.1;
+    var updateButton = document.getElementById("update");
+    var urlInput = document.getElementById("url-input");
+    var rateInput = document.getElementById("rate-input");
+    updateButton.onclick = function(e) {
+      url = urlInput.value;
+      if(!url.match(/(http:\/\/)|(https:\/\/)/))
+      {
+        url = "http://" + url;
+      }
+      updateRate = parseFloat(rateInput.value);
+      console.log("updating url to", url)
+    }
+
+    async function update()
+    {
+      var data = null;
+      //get data from server
+      if(url != null && url != "")
+      {
+        data = await fetch("getData", {method:"POST", body:JSON.stringify(url)});
+        data = await data.json();
+      }
+
+      tf.tidy(() =>
+      {
+        if(data != null)
+        {
+          data = tf.reshape(data.data, data.shape);
+        }
+        else
+        {
+          data = tf.zeros([4, 4]);
+        }
+        draw(data);
+      });
+
+      setTimeout(update, updateRate * 1000);
+    }
+
+    update();
+    </script>
+  </body>
+</html>
