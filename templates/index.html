@@ -60,6 +60,11 @@
       </div>
       <button id="update">Update</button>
     </div>
+    <svg width="0" height="0" style="position:absolute;z-index:-1">
+      <filter id="matrix">
+        <feColorMatrix type="matrix" values="0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0"/>
+      </filter>
+    </svg>
     <canvas id="canvas" width="0" height="0"></canvas>
 
     <script>
@@ -137,6 +142,7 @@
         {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
+          g.filter = 'url(#matrix)';
           g.drawImage(img, 0, 0, canvas.width, canvas.height);
         }
 
@@ -149,6 +155,7 @@
       {
         if(data != null)
         {
+          g.filter = "none";
           data = tf.reshape(data.data, data.shape);
         }
         else
