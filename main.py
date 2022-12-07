@@ -27,14 +27,16 @@ class GetData(Resource):
         url = request.get_json(force=True)
         #get data from url
         data = ppcl(url)
-        print(data)
+        # print(data)
+        #if an nd array, send nd array, otherwise just forward original data
         try:
           response = json_to_nd(response)
           #send as simple json object
           response = nd_to_json(response, method="plain")
           return response
         except:
-          print("couldnt parse data as nd array")
+          pass
+          # print("couldnt parse data as nd array")
 
         return data
 
