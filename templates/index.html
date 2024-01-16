@@ -147,9 +147,8 @@
       }
 
       //probably a base64 encoded image
-      if(data != null && data.data == null)
+      if(data != null && typeof(data) == "string")
       {
-        console.log(typeof data);
         var img = new Image();
         if(!data.startsWith("data:image"))
         {
@@ -176,14 +175,16 @@
 
         img.src = data;
         setTimeout(update, updateRate * 1000);
+
         return;
       }
 
+      //otherwise, its a generic nd array
       tf.tidy(() =>
       {
         if(data != null)
         {
-          data = tf.reshape(data.data, data.shape);
+          data = tf.tensor(data);
         }
         else
         {
