@@ -33,7 +33,8 @@ class GetData(Resource):
           data = nd_to_json(data, method="plain")
           return data
         except:
-          print("couldnt parse data as nd array")
+          pass
+          # print("couldnt parse data as nd array")
 
         return data
 
